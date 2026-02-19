@@ -9,7 +9,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all(); // جلب كل البيانات
+        $tasks = Task::latest()->get();
         return view('tasks.index', compact('tasks'));
     }
 
@@ -23,7 +23,7 @@ class TaskController extends Controller
         // الحفظ في قاعدة البيانات
         Task::create([
             'title' => $request->title,
-            'description' => $request->description
+            /*'description' => $request->description*/
         ]);
 
         // العودة للصفحة السابقة
