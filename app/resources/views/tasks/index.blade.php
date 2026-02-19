@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمة المهام</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 p-10">
     @if ($errors->any())
-    <div class="text-red-500 mb-4">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+        <div class="text-red-500 mb-4">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
@@ -28,30 +30,47 @@
 
         <ul class="space-y-3">
             @foreach ($tasks as $task)
-    <li class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-200">
-        <div class="flex flex-col">
-            <span class="text-lg">{{ $task->title }}</span>
-            <span class="text-xs text-gray-400">{{ $task->created_at->diffForHumans() }}</span>
+    <li class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-200 mb-2">
+        
+        <div class="flex items-center gap-3">
+            <form action="{{ route('tasks.toggle', $task->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <input type="checkbox" 
+                       class="cursor-pointer h-5 w-5 rounded text-blue-600 focus:ring-blue-500" 
+                       {{ $task->is_completed ? 'checked' : '' }} 
+                       onchange="this.form.submit()">
+            </form>
+
+            <div class="flex flex-col">
+                <span class="text-lg {{ $task->is_completed ? 'line-through text-gray-400' : 'text-gray-800' }}">
+                    {{ $task->title }}
+                </span>
+                <span class="text-[10px] text-gray-400">
+                    {{ $task->created_at->diffForHumans() }}
+                </span>
+            </div>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-3 items-center">
             <a href="{{ route('tasks.edit', $task->id) }}" 
                class="text-blue-500 hover:text-blue-700 text-sm font-medium">تعديل</a>
 
             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد؟')">
                 @csrf
-                @method('DELETE') <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">حذف</button>
+                @method('DELETE') 
+                <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">حذف</button>
             </form>
-            <input type="checkbox" class="ml-4" {{ $task->is_completed ? 'checked' : '' }} disabled>
         </div>
     </li>
 @endforeach
 
-            @if($tasks->isEmpty())
-                <p class="text-center text-gray-500">لا توجد مهام حتى الآن.. ابدأ بإضافة واحدة!</p>
-            @endif
-        </ul>
+    @if($tasks->isEmpty())
+        <p class="text-center text-gray-500">لا توجد مهام حتى الآن.. ابدأ بإضافة واحدة!</p>
+    @endif
+    </ul>
     </div>
 
 </body>
+
 </html>

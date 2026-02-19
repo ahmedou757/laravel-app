@@ -11,3 +11,5 @@ Route::get('tasks/{id}/edit', [TaskController::class, 'edit'])->name('tasks.edit
 Route::put('tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
 */
 Route::resource('tasks', TaskController::class);
+// استخدمنا PATCH لأننا نحدث جزءاً من البيانات فقط
+Route::patch('tasks/{id}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');

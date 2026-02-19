@@ -15,44 +15,50 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        // التحقق من البيانات (Validation)
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|max:255',
+            'description' => 'nullable'
         ]);
 
-        // الحفظ في قاعدة البيانات
-        Task::create([
-            'title' => $request->title,
-            /*'description' => $request->description*/
-        ]);
+        Task::create($validated);
 
-        // العودة للصفحة السابقة
-        return back(); 
+        return back()->with('success', 'تمت إضافة المهمة بنجاح!');
     }
 
     // دالة الحذف
-public function destroy($id)
-{
-    $task = Task::findOrFail($id); // ابحث عن المهمة أو أظهر خطأ 404
-    $task->delete(); // احذفها من قاعدة البيانات
-    return back(); // ارجع للصفحة السابقة
-}
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id); // ابحث عن المهمة أو أظهر خطأ 404
+        $task->delete(); // احذفها من قاعدة البيانات
+        return back(); // ارجع للصفحة السابقة
+    }
 
-// دالة عرض صفحة التعديل
-public function edit($id)
-{
-    $task = Task::findOrFail($id);
-    return view('tasks.edit', compact('task'));
-}
+    // دالة عرض صفحة التعديل
+    public function edit($id)
+    {
+        $task = Task::findOrFail($id);
+        return view('tasks.edit', compact('task'));
+    }
 
-// دالة حفظ التعديلات (Update)
-public function update(Request $request, $id)
-{
-    $request->validate(['title' => 'required|max:255']);
-    
-    $task = Task::findOrFail($id);
-    $task->update(['title' => $request->title]);
-    
-    return redirect()->route('tasks.index'); // العودة للقائمة الرئيسية
-}
+    // دالة حفظ التعديلات (Update)
+    public function update(Request $request, $id)
+    {
+        $request->validate(['title' => 'required|max:255']);
+
+        $task = Task::findOrFail($id);
+        $task->update(['title' => $request->title]);
+
+        return redirect()->route('tasks.index'); // العودة للقائمة الرئيسية
+    }
+    public function toggle($id)
+    {
+        $task = Task::findOrFail($id);
+
+        // عكس القيمة المنطقية الحالية
+        $task->update([
+            'is_completed' => !$task->is_completed
+        ]);
+
+        return back();
+    }
 }
