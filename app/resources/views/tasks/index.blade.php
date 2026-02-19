@@ -33,6 +33,7 @@
                 @csrf
                 @method('DELETE') <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">حذف</button>
             </form>
+            <input type="checkbox" class="ml-4" {{ $task->is_completed ? 'checked' : '' }} disabled>
         </div>
     </li>
 @endforeach
